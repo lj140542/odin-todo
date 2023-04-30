@@ -11,7 +11,49 @@
 </head>
 
 <body>
-  <header>Odin's ToDo</header>
+  <header id="logo">Odin's ToDo</header>
+  <nav>
+    <ul>
+      <li><a>Default</a></li>
+      <li><a>New</a><ion-icon class="delete-project" name="trash"></ion-icon></li>
+      <li><a>New</a><ion-icon class="delete-project" name="trash"></ion-icon></li>
+      <li class="selected"><a>New</a><ion-icon class="delete-project" name="trash"></ion-icon></li>
+      <li><a>New</a><ion-icon class="delete-project" name="trash"></ion-icon></li>
+      <li><a>New</a><ion-icon class="delete-project" name="trash"></ion-icon></li>
+      <li><a>New</a><ion-icon class="delete-project" name="trash"></ion-icon></li>
+      <li><a>New</a><ion-icon class="delete-project" name="trash"></ion-icon></li>
+      <li><a>New</a><ion-icon class="delete-project" name="trash"></ion-icon></li>
+      <li><button id="add-project"><ion-icon name="add-outline"></ion-icon></button></li>
+    </ul>
+  </nav>
+  <div id="content">
+    <div class="todo">
+      <div class="wrapper">
+        <ion-icon class="checkbox" name="ellipse-outline"></ion-icon>
+        <section class="title">You need to do that</section>
+      </div>
+      <ion-icon class="delete-todo" name="trash"></ion-icon>
+    </div>
+    <div class="todo">
+      <div class="wrapper">
+        <ion-icon class="checkbox" name="ellipse-outline"></ion-icon>
+        <section class="title">You need to do that</section>
+      </div>
+      <ion-icon class="delete-todo" name="trash"></ion-icon>
+    </div>
+    <div class="todo">
+      <div class="wrapper">
+        <ion-icon class="checkbox" name="checkmark-circle"></ion-icon>
+        <section class="title">This one is done</section>
+      </div>
+      <ion-icon class="delete-todo" name="trash"></ion-icon>
+    </div>
+    <button id="add-todo"><ion-icon name="add-circle"></ion-icon></button>
+  </div>
+  <footer>Well noted..</footer>
+
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </body>
 
 </html>
