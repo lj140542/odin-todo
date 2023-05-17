@@ -1,10 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,600&display=swap');
 
 * {
-  --background-color: #EEEEEE;
-  --lighter-color: #5971c1;
-  --darker-color: #27345f;
-  --accent-color: #23b28e;
+  --background-color: #FEFEFE;
+  --main-color: #5971c1; 
+  /* --background-color: #333333;
+  --main-color: #8FA9FF; */
+  --accent-color: #23b28e; 
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
   margin: 0;
@@ -37,7 +38,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: var(--lighter-color);
+  color: var(--main-color);
   background: var(--background-color);
 }
 
@@ -50,7 +51,7 @@ nav {
   display: flex;
   flex-direction: column;
   align-items: start;
-  margin: 8dvh 0px 0px 50px;
+  margin: 8dvh 0px 8dvh 50px;
   width: 15dvw;
   font-size: 1rem;
 }
@@ -67,11 +68,11 @@ li {
   width: 100%;
   list-style: none;
   padding: 10px;
-  border-left: solid 1px var(--lighter-color)
+  border-left: solid 1px var(--main-color)
 }
 
 li:hover {
-  border-left: solid 2px var(--darker-color);
+  border-left: solid 2px var(--accent-color);
 }
 
 li.selected {
@@ -103,12 +104,13 @@ li:hover ion-icon:not(#add-project ion-icon) {
   display: inline;
 }
 
-li #add-project {
+#add-project {
   display: flex;
   justify-content: start;
   align-items: center;
   border: solid 0px var(--accent-color);
   border-radius: 5px;
+  background: transparent;
   width: 100%;
   font-size: 1.5rem;
   color: var(--accent-color);
@@ -134,10 +136,10 @@ li #add-project {
   justify-content: space-between;
   align-items: center;
   width: 70%;
-  border: solid 1px var(--lighter-color);
+  border: solid 1px var(--main-color);
   padding: 10px 20px;
   border-radius: 5px;
-  color: var(--lighter-color);
+  color: var(--main-color);
 }
 
 .todo .wrapper {
@@ -166,6 +168,7 @@ li #add-project {
   align-items: center;
   border: solid 0px var(--accent-color);
   border-radius: 5px;
+  background: transparent;
   width: 15%;
   font-size: 2rem;
   color: var(--accent-color);
@@ -179,8 +182,8 @@ li #add-project {
 
 footer {
   grid-column: 1 / 3;
-  border-top: solid .5px var(--lighter-color);
-  color: var(--lighter-color);
+  border-top: solid .5px var(--main-color);
+  color: var(--main-color);
   display: flex;
   justify-content: center;
   align-items: center;
