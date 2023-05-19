@@ -2,22 +2,22 @@
 
 * {
   --background-color: #FEFEFE;
-  --main-color: #5971c1; 
+  --main-color: #5971c1;
   /* --background-color: #333333;
   --main-color: #8FA9FF; */
-  --accent-color: #23b28e; 
+  --accent-color: #23b28e;
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
   margin: 0;
   padding: 0;
 }
 
-li ion-icon,
+.project ion-icon,
 .todo ion-icon {
   cursor: pointer;
 }
 
-li ion-icon:active,
+.project ion-icon:active,
 .todo ion-icon:active {
   transform: scale(.9);
 }
@@ -56,11 +56,11 @@ nav {
   font-size: 1rem;
 }
 
-ul {
+#projects {
   width: 80%;
 }
 
-li {
+.project {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -71,28 +71,28 @@ li {
   border-left: solid 1px var(--main-color)
 }
 
-li:hover {
+.project:hover {
   border-left: solid 2px var(--accent-color);
 }
 
-li.selected {
+.project.selected {
   border-left: solid 2px var(--accent-color);
 }
 
-li a {
+.project a {
   text-decoration: none;
   cursor: pointer;
   width: 70%;
   color: #5971c1;
 }
 
-li.selected a {
+.project.selected a {
   font-size: 1.2rem;
   font-weight: 500;
   color: #23b28e;
 }
 
-li ion-icon:not(#add-project ion-icon) {
+.project ion-icon:not(#add-project ion-icon) {
   display: none;
   font-size: 1rem;
   align-self: center;
@@ -100,7 +100,8 @@ li ion-icon:not(#add-project ion-icon) {
   text-align: center;
 }
 
-li:hover ion-icon:not(#add-project ion-icon) {
+.project:hover ion-icon:not(#add-project ion-icon,
+  #default-project ion-icon) {
   display: inline;
 }
 
