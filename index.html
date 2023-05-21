@@ -14,26 +14,20 @@
   <header id="logo">Odin's ToDo</header>
   <nav>
     <ul id="projects">
-      <li id="default-project" class="project"><a>Default</a></li>
-      <li class="project"><a>New</a><ion-icon class="delete-project" name="trash"></ion-icon></li>
-      <li class="project"><a>New</a><ion-icon class="delete-project" name="trash"></ion-icon></li>
-      <li class="project" class="selected"><a>New</a><ion-icon class="delete-project" name="trash"></ion-icon></li>
-      <li class="project"><a>New</a><ion-icon class="delete-project" name="trash"></ion-icon></li>
-      <li class="project"><a>New</a><ion-icon class="delete-project" name="trash"></ion-icon></li>
-      <li class="project"><a>New</a><ion-icon class="delete-project" name="trash"></ion-icon></li>
-      <li class="project"><a>New</a><ion-icon class="delete-project" name="trash"></ion-icon></li>
-      <li class="project"><a>New</a><ion-icon class="delete-project" name="trash"></ion-icon></li>
-      <li class="project"><button id="add-project"><ion-icon name="add-outline"></ion-icon></button></li>
+      <li id="default-project" class="project selected" project-id="0">
+        <a>Default</a>
+        <ion-icon class="delete-project" name="trash"></ion-icon>
+      </li>
+      <li class="project" project-id="1">
+        <a>New Project</a>
+        <ion-icon class="delete-project" name="trash"></ion-icon>
+      </li>
+      <li class="project">
+        <button id="add-project"><ion-icon name="add-outline"></ion-icon></button>
+      </li>
     </ul>
   </nav>
   <div id="content">
-    <div class="todo">
-      <div class="wrapper">
-        <ion-icon class="checkbox" name="ellipse-outline"></ion-icon>
-        <section class="title">You need to do that</section>
-      </div>
-      <ion-icon class="delete-todo" name="trash"></ion-icon>
-    </div>
     <div class="todo">
       <div class="wrapper">
         <ion-icon class="checkbox" name="ellipse-outline"></ion-icon>
