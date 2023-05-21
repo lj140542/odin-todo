@@ -92,6 +92,10 @@ nav {
   color: #23b28e;
 }
 
+.project.selected:not(#default-project) a {
+  cursor:text;
+}
+
 .project ion-icon:not(#add-project ion-icon) {
   display: none;
   font-size: 1rem;
