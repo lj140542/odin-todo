@@ -5,7 +5,9 @@ const ToDo = (id, title, done) => {
   const getTitle = () => title;
   const getDone = () => done;
   const setDone = (isDone) => done = isDone;
-  return { getId, getTitle, getDone, setDone };
+  const setTitle = (newTitle) => title = newTitle;
+  const toString = () => `id : ${id} | title : ${title} | done : ${done}`;
+  return { getId, getTitle, getDone, setDone, setTitle, toString };
 }
 
 const Project = (id, name, todos) => {
@@ -13,7 +15,7 @@ const Project = (id, name, todos) => {
   const getName = () => name;
   const getTodos = () => todos;
   const setName = (newName) => name = newName;
-  const addTodo = (todo) => todos.add(todo);
+  const addTodo = (todo) => todos.push(todo);
   const toString = () => `id : ${id} | name : ${name}`;
   return { getId, getName, getTodos, setName, addTodo, toString };
 }
@@ -38,6 +40,7 @@ const Display = (() => {
     let iconElement = document.createElement('ion-icon');
 
     iconElement.setAttribute('name', 'add-circle');
+    buttonElement.addEventListener('click', () => displayNewTodo());
     buttonElement.appendChild(iconElement);
     buttonElement.id = 'add-todo';
 
@@ -102,17 +105,22 @@ const Display = (() => {
 
     wrapperElement.classList.add('wrapper');
     checkElement.classList.add('checkbox');
+    checkElement.addEventListener('click', e => Controller.checkTodo(e))
     if (todo.getDone())
       checkElement.setAttribute('name', 'checkmark-circle');
     else
       checkElement.setAttribute('name', 'ellipse-outline');
     titleElement.classList.add('title');
     titleElement.textContent = todo.getTitle();
+    titleElement.contentEditable = 'true';
+    titleElement.addEventListener('blur', e => Controller.renameTodo(e));
     wrapperElement.append(checkElement, titleElement);
     iconElement.classList.add('delete-todo');
     iconElement.setAttribute('name', 'trash');
+    iconElement.addEventListener('click', e => Controller.removeTodo(e));
     todoElement.append(wrapperElement, iconElement);
     todoElement.classList.add('todo');
+    todoElement.setAttribute('todo-id', todo.getId());
 
     contentDIV.appendChild(todoElement);
   };
@@ -125,14 +133,18 @@ const Display = (() => {
     displayAddProjectButton();
   };
   const displayNewTodo = () => {
+    let newTodo = Controller.createTodo();
 
+    document.getElementById('content').removeChild(document.getElementById('add-todo'));
+    displayTodo(newTodo);
+    displayAddTodoButton();
   };
   return { displayProjectList, displayTodoList, displayNewProject, displayNewTodo };
 })();
 
 const Controller = (() => {
   const createProject = () => {
-    let newProject = Project(Controller.getNewProjectId(), 'New Project', []);
+    let newProject = Project(getNewProjectId(), 'New Project', []);
     projects.push(newProject);
     return newProject;
   };
@@ -166,13 +178,24 @@ const Controller = (() => {
       if (id > 0) liProject.firstElementChild.contentEditable = 'true';
       liProject.classList.add('selected');
       Display.displayTodoList(projects[projectIndex].getTodos());
+      currentProjectIndex = projectIndex;
     }
   };
   const createTodo = () => {
-
+    let todo = ToDo(getNewTodoId(currentProjectIndex), 'New task', false);
+    projects[currentProjectIndex].addTodo(todo);
+    return todo;
   };
-  const removeTodo = () => {
+  const removeTodo = (event) => {
+    let divElement = event.target.parentElement;
+    let todoId = divElement.attributes['todo-id'].value;
+    let todoIndex = getTodoIndex(currentProjectIndex, todoId);
+    let todos = projects[currentProjectIndex].getTodos();
 
+    if (todoIndex > -1 && todoIndex < todos.length) {
+      todos.splice(todoIndex, 1);
+      divElement.parentElement.removeChild(divElement);
+    }
   };
   const getNewProjectId = () => {
     let maxId = 0;
@@ -181,8 +204,20 @@ const Controller = (() => {
     });
     return maxId + 1;
   };
+  const getNewTodoId = (projectId) => {
+    let maxId = 0;
+    if (projectId < 0 || projectId > projects.length) return -1;
+    projects[projectId].getTodos().forEach(todo => {
+      if (todo.getId() > maxId) maxId = todo.getId();
+    });
+    return maxId + 1;
+  };
   const getProjectIndex = (id) => {
     return projects.findIndex((project) => project.getId() == id);
+  };
+  const getTodoIndex = (projectIndex, todoId) => {
+    if (projectIndex < 0 || projectIndex > projects.length) return -1;
+    return projects[projectIndex].getTodos().findIndex((todo) => todo.getId() == todoId);
   }
   const renameProject = (e, id) => {
     e.preventDefault();
@@ -193,15 +228,45 @@ const Controller = (() => {
       else
         projects[index].setName(e.target.textContent);
     }
-    console.log(projects.toString());
-  }
-  return { createProject, removeProject, selectProject, createTodo, removeTodo, getNewProjectId, renameProject };
+  };
+  const renameTodo = (event) => {
+    let titleElement = event.target;
+    let divElement = titleElement.parentElement.parentElement;
+    let todoId = divElement.attributes['todo-id'].value;
+    let todoIndex = getTodoIndex(currentProjectIndex, todoId);
+    let todos = projects[currentProjectIndex].getTodos();
+
+    if (todoIndex > -1 && todoIndex < todos.length) {
+      let todo = todos[todoIndex];
+      if (titleElement.innerHTML.replaceAll('&nbsp;', '') == '')
+        titleElement.textContent = todo.getTitle();
+      else
+        todo.setTitle(titleElement.textContent);
+    }
+  };
+  const checkTodo = (event) => {
+    let checkElement = event.target;
+    let divElement = checkElement.parentElement.parentElement;
+    let todoId = divElement.attributes['todo-id'].value;
+    let todoIndex = getTodoIndex(currentProjectIndex, todoId);
+    let todos = projects[currentProjectIndex].getTodos();
+
+    if (todoIndex > -1 && todoIndex < todos.length) {
+      let todo = todos[todoIndex];
+      todo.setDone(!todo.getDone());
+      if (todo.getDone())
+        checkElement.setAttribute('name', 'checkmark-circle');
+      else
+        checkElement.setAttribute('name', 'ellipse-outline');
+    }
+  };
+  return { createProject, removeProject, selectProject, createTodo, removeTodo, renameProject, renameTodo, checkTodo };
 })();
 
 const projectUL = document.getElementById('projects');
 const contentDIV = document.getElementById('content');
-
 let projects = [Project(0, '#Default', [ToDo(0, 'This is a default item', false)])];
+let currentProjectIndex = 0;
 
 Display.displayProjectList(projects);
 Controller.selectProject(0);
