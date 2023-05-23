@@ -13,37 +13,9 @@
 <body>
   <header id="logo">Odin's ToDo</header>
   <nav>
-    <ul id="projects">
-      <li id="default-project" class="project selected" project-id="0">
-        <a>Default</a>
-        <ion-icon class="delete-project" name="trash"></ion-icon>
-      </li>
-      <li class="project" project-id="1">
-        <a>New Project</a>
-        <ion-icon class="delete-project" name="trash"></ion-icon>
-      </li>
-      <li class="project">
-        <button id="add-project"><ion-icon name="add-outline"></ion-icon></button>
-      </li>
-    </ul>
+    <ul id="projects"></ul>
   </nav>
-  <div id="content">
-    <div class="todo">
-      <div class="wrapper">
-        <ion-icon class="checkbox" name="ellipse-outline"></ion-icon>
-        <section class="title">You need to do that</section>
-      </div>
-      <ion-icon class="delete-todo" name="trash"></ion-icon>
-    </div>
-    <div class="todo">
-      <div class="wrapper">
-        <ion-icon class="checkbox" name="checkmark-circle"></ion-icon>
-        <section class="title">This one is done</section>
-      </div>
-      <ion-icon class="delete-todo" name="trash"></ion-icon>
-    </div>
-    <button id="add-todo"><ion-icon name="add-circle"></ion-icon></button>
-  </div>
+  <div id="content"></div>
   <footer>Well noted..</footer>
 
   <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
