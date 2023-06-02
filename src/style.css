@@ -154,7 +154,9 @@ nav {
 }
 
 .todo ion-icon {
-  font-size: 1.5rem;
+  /* font-size: 1.5rem; */
+  min-width: 25px;
+  min-height: 20px;
   transition: .3s ease;
   color: var(--accent-color);
 }
