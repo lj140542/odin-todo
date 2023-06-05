@@ -1,26 +1,10 @@
 import './style.css';
-
-const ToDo = (id, title, done) => {
-  const getId = () => id;
-  const getTitle = () => title;
-  const getDone = () => done;
-  const setDone = (isDone) => done = isDone;
-  const setTitle = (newTitle) => title = newTitle;
-  const toString = () => `id : ${id} | title : ${title} | done : ${done}`;
-  return { getId, getTitle, getDone, setDone, setTitle, toString };
-}
-
-const Project = (id, name, todos) => {
-  const getId = () => id;
-  const getName = () => name;
-  const getTodos = () => todos;
-  const setName = (newName) => name = newName;
-  const addTodo = (todo) => todos.push(todo);
-  const toString = () => `id : ${id} | name : ${name}`;
-  return { getId, getName, getTodos, setName, addTodo, toString };
-}
+import { Project } from './project.js';
+import { ToDo } from './todo.js';
 
 const Display = (() => {
+  const projectUL = document.getElementById('projects');
+  const contentDIV = document.getElementById('content');
   const displayAddProjectButton = () => {
     let liElement = document.createElement('li');
     let buttonElement = document.createElement('button');
@@ -139,13 +123,15 @@ const Display = (() => {
     displayTodo(newTodo);
     displayAddTodoButton();
   };
-  return { displayProjectList, displayTodoList, displayNewProject, displayNewTodo };
+  return { displayProjectList, displayTodoList };
 })();
 
 const Controller = (() => {
+  let projectList = [Project(0, '#Default', [ToDo(0, 'This is a default item', false)])];
+  let currentProjectIndex = 0;
   const createProject = () => {
     let newProject = Project(getNewProjectId(), 'New Project', []);
-    projects.push(newProject);
+    projectList.push(newProject);
     return newProject;
   };
   const removeProject = (event) => {
@@ -153,14 +139,14 @@ const Controller = (() => {
     let projectId = liElement.attributes['project-id'].value;
     let projectIndex = getProjectIndex(projectId);
 
-    if (projectIndex > -1 && projectIndex < projects.length) {
-      projects.splice(projectIndex, 1);
+    if (projectIndex > -1 && projectIndex < projectList.length) {
+      projectList.splice(projectIndex, 1);
       if (liElement.classList.contains('selected')) selectProject(0);
       liElement.parentElement.removeChild(liElement);
     }
   };
-  const selectProject = (id) => {
-    let liProject = document.querySelector(`.project[project-id="${id}"]`);
+  const selectProject = (projectId) => {
+    let liProject = document.querySelector(`.project[project-id="${projectId}"]`);
 
     if (liProject.classList.contains('selected')) return;
 
@@ -172,25 +158,25 @@ const Controller = (() => {
     }
 
     // select the correct project
-    let projectIndex = getProjectIndex(id);
-    if (projectIndex > -1 && projectIndex < projects.length) {
+    let projectIndex = getProjectIndex(projectId);
+    if (projectIndex > -1 && projectIndex < projectList.length) {
       // blocks the edition of the default project name
-      if (id > 0) liProject.firstElementChild.contentEditable = 'true';
+      if (projectId > 0) liProject.firstElementChild.contentEditable = 'true';
       liProject.classList.add('selected');
-      Display.displayTodoList(projects[projectIndex].getTodos());
+      Display.displayTodoList(projectList[projectIndex].getTodos());
       currentProjectIndex = projectIndex;
     }
   };
   const createTodo = () => {
     let todo = ToDo(getNewTodoId(currentProjectIndex), 'New task', false);
-    projects[currentProjectIndex].addTodo(todo);
+    projectList[currentProjectIndex].addTodo(todo);
     return todo;
   };
   const removeTodo = (event) => {
     let divElement = event.target.parentElement;
     let todoId = divElement.attributes['todo-id'].value;
     let todoIndex = getTodoIndex(currentProjectIndex, todoId);
-    let todos = projects[currentProjectIndex].getTodos();
+    let todos = projectList[currentProjectIndex].getTodos();
 
     if (todoIndex > -1 && todoIndex < todos.length) {
       todos.splice(todoIndex, 1);
@@ -199,34 +185,34 @@ const Controller = (() => {
   };
   const getNewProjectId = () => {
     let maxId = 0;
-    projects.forEach(project => {
+    projectList.forEach(project => {
       if (project.getId() > maxId) maxId = project.getId();
     });
     return maxId + 1;
   };
   const getNewTodoId = (projectId) => {
     let maxId = 0;
-    if (projectId < 0 || projectId > projects.length) return -1;
-    projects[projectId].getTodos().forEach(todo => {
+    if (projectId < 0 || projectId > projectList.length) return -1;
+    projectList[projectId].getTodos().forEach(todo => {
       if (todo.getId() > maxId) maxId = todo.getId();
     });
     return maxId + 1;
   };
-  const getProjectIndex = (id) => {
-    return projects.findIndex((project) => project.getId() == id);
+  const getProjectIndex = (projectId) => {
+    return projectList.findIndex((project) => project.getId() == projectId);
   };
   const getTodoIndex = (projectIndex, todoId) => {
-    if (projectIndex < 0 || projectIndex > projects.length) return -1;
-    return projects[projectIndex].getTodos().findIndex((todo) => todo.getId() == todoId);
+    if (projectIndex < 0 || projectIndex > projectList.length) return -1;
+    return projectList[projectIndex].getTodos().findIndex((todo) => todo.getId() == todoId);
   }
-  const renameProject = (e, id) => {
-    e.preventDefault();
-    let index = getProjectIndex(id);
-    if (index > -1 && index < projects.length) {
-      if (e.target.innerHTML.replaceAll('&nbsp;', '') == '')
-        e.target.textContent = projects[index].getName();
+  const renameProject = (event, projectId) => {
+    event.preventDefault();
+    let index = getProjectIndex(projectId);
+    if (index > -1 && index < projectList.length) {
+      if (event.target.innerHTML.replaceAll('&nbsp;', '') == '')
+        event.target.textContent = projectList[index].getName();
       else
-        projects[index].setName(e.target.textContent);
+        projectList[index].setName(event.target.textContent);
     }
   };
   const renameTodo = (event) => {
@@ -234,7 +220,7 @@ const Controller = (() => {
     let divElement = titleElement.parentElement.parentElement;
     let todoId = divElement.attributes['todo-id'].value;
     let todoIndex = getTodoIndex(currentProjectIndex, todoId);
-    let todos = projects[currentProjectIndex].getTodos();
+    let todos = projectList[currentProjectIndex].getTodos();
 
     if (todoIndex > -1 && todoIndex < todos.length) {
       let todo = todos[todoIndex];
@@ -249,7 +235,7 @@ const Controller = (() => {
     let divElement = checkElement.parentElement.parentElement;
     let todoId = divElement.attributes['todo-id'].value;
     let todoIndex = getTodoIndex(currentProjectIndex, todoId);
-    let todos = projects[currentProjectIndex].getTodos();
+    let todos = projectList[currentProjectIndex].getTodos();
 
     if (todoIndex > -1 && todoIndex < todos.length) {
       let todo = todos[todoIndex];
@@ -260,13 +246,11 @@ const Controller = (() => {
         checkElement.setAttribute('name', 'ellipse-outline');
     }
   };
-  return { createProject, removeProject, selectProject, createTodo, removeTodo, renameProject, renameTodo, checkTodo };
+  const getProjectList = () => {
+    return projectList;
+  };
+  return { createProject, removeProject, selectProject, createTodo, removeTodo, renameProject, renameTodo, checkTodo, getProjectList };
 })();
 
-const projectUL = document.getElementById('projects');
-const contentDIV = document.getElementById('content');
-let projects = [Project(0, '#Default', [ToDo(0, 'This is a default item', false)])];
-let currentProjectIndex = 0;
-
-Display.displayProjectList(projects);
+Display.displayProjectList(Controller.getProjectList());
 Controller.selectProject(0);
