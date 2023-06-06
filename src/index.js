@@ -127,7 +127,8 @@ const Display = (() => {
 })();
 
 const Controller = (() => {
-  let projectList = [Project(0, '#Default', [ToDo(0, 'This is a default item', false)])];
+  let projectsJSON = JSON;
+  let projectList = [];
   let currentProjectIndex = 0;
   const createProject = () => {
     let newProject = Project(getNewProjectId(), 'New Project', []);
@@ -163,7 +164,9 @@ const Controller = (() => {
       // blocks the edition of the default project name
       if (projectId > 0) liProject.firstElementChild.contentEditable = 'true';
       liProject.classList.add('selected');
-      Display.displayTodoList(projectList[projectIndex].getTodos());
+      if (projectList[projectIndex].getTodos().length > 0) {
+        Display.displayTodoList(projectList[projectIndex].getTodos());
+      }
       currentProjectIndex = projectIndex;
     }
   };
@@ -249,8 +252,31 @@ const Controller = (() => {
   const getProjectList = () => {
     return projectList;
   };
-  return { createProject, removeProject, selectProject, createTodo, removeTodo, renameProject, renameTodo, checkTodo, getProjectList };
+  const parseProjectsJSON = (json) => {
+    projectsJSON = json;
+
+    projectsJSON.forEach(project => {
+      let todoList = [];
+      if (project.id >= 0 && project.name != '' && getProjectIndex(project.id) == -1) {
+        project.todos.forEach(todo => {
+          if (todo.id >= 0 && todo.name != '' && todoList.findIndex((todoSearch) => todoSearch.getId() == todo.id) == -1) {
+            todoList.push(ToDo(todo.id, todo.title, todo.done));
+          }
+        });
+        projectList.push(Project(project.id, project.name, todoList));
+      }
+    });
+  };
+  return { createProject, removeProject, selectProject, createTodo, removeTodo, renameProject, renameTodo, checkTodo, getProjectList, parseProjectsJSON };
 })();
+
+// CHECK IF THERE IS NO KNOWN DATA TO CREATE THE DEFAULT ONE
+if (localStorage.length == 0 || !localStorage.getItem('projects')) {
+  localStorage.setItem("projects", '[{"id": "0","name": "#Default", "todos": [{"id": "0", "title": "This is a default item", "done": false}]}]')
+}
+
+// RECOVERY OF STORED DATA
+Controller.parseProjectsJSON(JSON.parse(localStorage.getItem('projects')));
 
 Display.displayProjectList(Controller.getProjectList());
 Controller.selectProject(0);
