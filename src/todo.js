@@ -5,7 +5,8 @@ const ToDo = (id, title, done) => {
   const setDone = (isDone) => done = isDone;
   const setTitle = (newTitle) => title = newTitle;
   const toString = () => `id : ${id} | title : ${title} | done : ${done}`;
-  return { getId, getTitle, getDone, setDone, setTitle, toString };
+  const toJSON = () => JSON.parse(`{"id":"${id}","title":"${title}","done":${done}}`);
+  return { getId, getTitle, getDone, setDone, setTitle, toString, toJSON };
 }
 
 export { ToDo };

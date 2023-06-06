@@ -42,9 +42,11 @@ const Display = (() => {
   const displayTodoList = (todoList) => {
     clearTodoList();
 
-    todoList.forEach(todo => {
-      displayTodo(todo);
-    });
+    if (todoList.length > 0) {
+      todoList.forEach(todo => {
+        displayTodo(todo);
+      });
+    }
 
     displayAddTodoButton();
   };
@@ -133,6 +135,8 @@ const Controller = (() => {
   const createProject = () => {
     let newProject = Project(getNewProjectId(), 'New Project', []);
     projectList.push(newProject);
+    projectsJSON.push(newProject.toJSON());
+    localStorage.setItem("projects", JSON.stringify(projectsJSON));
     return newProject;
   };
   const removeProject = (event) => {
@@ -142,6 +146,8 @@ const Controller = (() => {
 
     if (projectIndex > -1 && projectIndex < projectList.length) {
       projectList.splice(projectIndex, 1);
+      projectsJSON.splice(projectIndex, 1);
+      localStorage.setItem("projects", JSON.stringify(projectsJSON));
       if (liElement.classList.contains('selected')) selectProject(0);
       liElement.parentElement.removeChild(liElement);
     }
@@ -164,15 +170,15 @@ const Controller = (() => {
       // blocks the edition of the default project name
       if (projectId > 0) liProject.firstElementChild.contentEditable = 'true';
       liProject.classList.add('selected');
-      if (projectList[projectIndex].getTodos().length > 0) {
-        Display.displayTodoList(projectList[projectIndex].getTodos());
-      }
+      Display.displayTodoList(projectList[projectIndex].getTodos());
       currentProjectIndex = projectIndex;
     }
   };
   const createTodo = () => {
     let todo = ToDo(getNewTodoId(currentProjectIndex), 'New task', false);
     projectList[currentProjectIndex].addTodo(todo);
+    projectsJSON[currentProjectIndex] = projectList[currentProjectIndex].toJSON();
+    localStorage.setItem("projects", JSON.stringify(projectsJSON));
     return todo;
   };
   const removeTodo = (event) => {
@@ -183,6 +189,8 @@ const Controller = (() => {
 
     if (todoIndex > -1 && todoIndex < todos.length) {
       todos.splice(todoIndex, 1);
+      projectsJSON[currentProjectIndex] = projectList[currentProjectIndex].toJSON();
+      localStorage.setItem("projects", JSON.stringify(projectsJSON));
       divElement.parentElement.removeChild(divElement);
     }
   };
@@ -214,8 +222,11 @@ const Controller = (() => {
     if (index > -1 && index < projectList.length) {
       if (event.target.innerHTML.replaceAll('&nbsp;', '') == '')
         event.target.textContent = projectList[index].getName();
-      else
+      else {
         projectList[index].setName(event.target.textContent);
+        projectsJSON[index].name = event.target.textContent;
+        localStorage.setItem("projects", JSON.stringify(projectsJSON));
+      }
     }
   };
   const renameTodo = (event) => {
@@ -229,8 +240,11 @@ const Controller = (() => {
       let todo = todos[todoIndex];
       if (titleElement.innerHTML.replaceAll('&nbsp;', '') == '')
         titleElement.textContent = todo.getTitle();
-      else
+      else {
         todo.setTitle(titleElement.textContent);
+        projectsJSON[currentProjectIndex] = projectList[currentProjectIndex].toJSON();
+        localStorage.setItem("projects", JSON.stringify(projectsJSON));
+      }
     }
   };
   const checkTodo = (event) => {
@@ -243,6 +257,8 @@ const Controller = (() => {
     if (todoIndex > -1 && todoIndex < todos.length) {
       let todo = todos[todoIndex];
       todo.setDone(!todo.getDone());
+      projectsJSON[currentProjectIndex] = projectList[currentProjectIndex].toJSON();
+      localStorage.setItem("projects", JSON.stringify(projectsJSON));
       if (todo.getDone())
         checkElement.setAttribute('name', 'checkmark-circle');
       else
