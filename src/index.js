@@ -172,6 +172,7 @@ const Controller = (() => {
       liProject.classList.add('selected');
       Display.displayTodoList(projectList[projectIndex].getTodos());
       currentProjectIndex = projectIndex;
+      localStorage.setItem('selectedProjectId', projectId);
     }
   };
   const createTodo = () => {
@@ -287,12 +288,13 @@ const Controller = (() => {
 })();
 
 // CHECK IF THERE IS NO KNOWN DATA TO CREATE THE DEFAULT ONE
-if (localStorage.length == 0 || !localStorage.getItem('projects')) {
-  localStorage.setItem("projects", '[{"id": "0","name": "#Default", "todos": [{"id": "0", "title": "This is a default item", "done": false}]}]')
-}
+if (!localStorage.getItem('projects'))
+  localStorage.setItem("projects", '[{"id": "0","name": "#Default", "todos": [{"id": "0", "title": "This is a default item", "done": false}]}]');
+if (!localStorage.getItem('selectedProjectId'))
+  localStorage.setItem('selectedProjectId', 0);
 
 // RECOVERY OF STORED DATA
 Controller.parseProjectsJSON(JSON.parse(localStorage.getItem('projects')));
 
 Display.displayProjectList(Controller.getProjectList());
-Controller.selectProject(0);
+Controller.selectProject(localStorage.getItem('selectedProjectId'));
